@@ -47,22 +47,22 @@ export function ClockInOut() {
   const { t } = useTranslation();
 
   const { data: employees } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/employees"],
+    queryKey: ["http://42.118.102.26:4500/api/employees"],
   });
 
   const { data: todayAttendance, refetch: refetchTodayAttendance } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance/today", selectedEmployeeId],
+    queryKey: ["http://42.118.102.26:4500/api/attendance/today", selectedEmployeeId],
     enabled: !!selectedEmployeeId,
   });
 
   const clockInMutation = useMutation({
     mutationFn: () =>
-      apiRequest("POST", "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance/clock-in", {
+      apiRequest("POST", "http://42.118.102.26:4500/api/attendance/clock-in", {
         employeeId: selectedEmployeeId,
         notes,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/attendance"] });
       refetchTodayAttendance();
       setNotes("");
     },
@@ -79,11 +79,11 @@ export function ClockInOut() {
     mutationFn: () =>
       apiRequest(
         "POST",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance/clock-out/${(todayAttendance as AttendanceRecord)?.id}`,
+        `http://42.118.102.26:4500/api/attendance/clock-out/${(todayAttendance as AttendanceRecord)?.id}`,
         {},
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/attendance"] });
       refetchTodayAttendance();
     },
     onError: () => {
@@ -99,11 +99,11 @@ export function ClockInOut() {
     mutationFn: () =>
       apiRequest(
         "POST",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance/break-start/${(todayAttendance as AttendanceRecord)?.id}`,
+        `http://42.118.102.26:4500/api/attendance/break-start/${(todayAttendance as AttendanceRecord)?.id}`,
         {},
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/attendance"] });
       refetchTodayAttendance();
     },
     onError: () => {
@@ -119,11 +119,11 @@ export function ClockInOut() {
     mutationFn: () =>
       apiRequest(
         "POST",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance/break-end/${(todayAttendance as AttendanceRecord)?.id}`,
+        `http://42.118.102.26:4500/api/attendance/break-end/${(todayAttendance as AttendanceRecord)?.id}`,
         {},
       ),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/attendance"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/attendance"] });
       refetchTodayAttendance();
     },
     onError: () => {

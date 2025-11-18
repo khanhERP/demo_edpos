@@ -39,7 +39,7 @@ export function SpendingReport() {
     isLoading: isLoadingReceipts,
     refetch: refetchPurchaseReceipts,
   } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/purchase-receipts", { startDate, endDate }],
+    queryKey: ["http://42.118.102.26:4500/api/purchase-receipts", { startDate, endDate }],
     queryFn: async () => {
       const params = new URLSearchParams();
 
@@ -54,11 +54,11 @@ export function SpendingReport() {
       console.log("📊 Fetching purchase receipts with date filter:", {
         startDate,
         endDate,
-        url: `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/purchase-receipts?${params.toString()}`,
+        url: `http://42.118.102.26:4500/api/purchase-receipts?${params.toString()}`,
       });
 
       const response = await fetch(
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/purchase-receipts?${params.toString()}`,
+        `http://42.118.102.26:4500/api/purchase-receipts?${params.toString()}`,
       );
       if (!response.ok) throw new Error("Failed to fetch purchase receipts");
       const result = await response.json();
@@ -75,23 +75,23 @@ export function SpendingReport() {
 
   // Fetch categories
   const { data: categories = [] } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories"],
+    queryKey: ["http://42.118.102.26:4500/api/categories"],
   });
 
   // Fetch products to get category information
   const { data: products = [] } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products"],
+    queryKey: ["http://42.118.102.26:4500/api/products"],
   });
 
   // Fetch suppliers
   const { data: suppliers = [] } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/suppliers"],
+    queryKey: ["http://42.118.102.26:4500/api/suppliers"],
   });
 
   // Fetch expense vouchers for debt calculation with date filter
   const { data: expenseVouchers = [], refetch: refetchExpenseVouchers } =
     useQuery({
-      queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/expense-vouchers", { startDate, endDate }],
+      queryKey: ["http://42.118.102.26:4500/api/expense-vouchers", { startDate, endDate }],
       queryFn: async () => {
         const params = new URLSearchParams();
 
@@ -105,11 +105,11 @@ export function SpendingReport() {
         console.log("💰 Fetching expense vouchers with date filter:", {
           startDate,
           endDate,
-          url: `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/expense-vouchers?${params.toString()}`,
+          url: `http://42.118.102.26:4500/api/expense-vouchers?${params.toString()}`,
         });
 
         const response = await fetch(
-          `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/expense-vouchers?${params.toString()}`,
+          `http://42.118.102.26:4500/api/expense-vouchers?${params.toString()}`,
         );
         if (!response.ok) throw new Error("Failed to fetch expense vouchers");
         const result = await response.json();
@@ -125,10 +125,10 @@ export function SpendingReport() {
 
   // Fetch orders for revenue calculation
   const { data: orders = [], refetch: refetchOrders } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders/date-range", startDate, endDate],
+    queryKey: ["http://42.118.102.26:4500/api/orders/date-range", startDate, endDate],
     queryFn: async () => {
       const response = await fetch(
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders/date-range/${startDate}/${endDate}/all`,
+        `http://42.118.102.26:4500/api/orders/date-range/${startDate}/${endDate}/all`,
       );
       if (!response.ok) throw new Error("Failed to fetch orders");
       return response.json();

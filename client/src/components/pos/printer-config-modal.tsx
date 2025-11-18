@@ -83,9 +83,9 @@ export function PrinterConfigModal({
 
   // Fetch printer configurations
   const { data: printerConfigs = [], isLoading } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs"],
+    queryKey: ["http://42.118.102.26:4500/api/printer-configs"],
     queryFn: async () => {
-      const response = await apiRequest("GET", "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs");
+      const response = await apiRequest("GET", "http://42.118.102.26:4500/api/printer-configs");
       return response.json();
     },
     enabled: isOpen,
@@ -98,15 +98,15 @@ export function PrinterConfigModal({
     mutationFn: async (configData: any) => {
       const response = await apiRequest(
         "POST",
-        "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs",
+        "http://42.118.102.26:4500/api/printer-configs",
         configData,
       );
       return response.json();
     },
     onSuccess: () => {
       // Force refetch data
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs"] });
-      queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/printer-configs"] });
+      queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/printer-configs"] });
       resetForm();
     },
     onError: () => {
@@ -123,15 +123,15 @@ export function PrinterConfigModal({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
       const response = await apiRequest(
         "PUT",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs/${id}`,
+        `http://42.118.102.26:4500/api/printer-configs/${id}`,
         data,
       );
       return response.json();
     },
     onSuccess: () => {
       // Force refetch data
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs"] });
-      queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/printer-configs"] });
+      queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/printer-configs"] });
       resetForm();
     },
     onError: () => {
@@ -146,12 +146,12 @@ export function PrinterConfigModal({
   // Delete printer config mutation
   const deleteConfigMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs/${id}`);
+      await apiRequest("DELETE", `http://42.118.102.26:4500/api/printer-configs/${id}`);
     },
     onSuccess: () => {
       // Force refetch data
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs"] });
-      queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/printer-configs"] });
+      queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/printer-configs"] });
     },
     onError: () => {
       toast({
@@ -167,7 +167,7 @@ export function PrinterConfigModal({
     mutationFn: async (id: number) => {
       const response = await apiRequest(
         "POST",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs/${id}/test`,
+        `http://42.118.102.26:4500/api/printer-configs/${id}/test`,
       );
       return response.json();
     },
@@ -444,6 +444,7 @@ export function PrinterConfigModal({
                         <SelectItem value="3">{t("common.floor")} 3</SelectItem>
                         <SelectItem value="4">{t("common.floor")} 4</SelectItem>
                         <SelectItem value="5">{t("common.floor")} 5</SelectItem>
+                        <SelectItem value="takeaway">{t("tables.takeaway")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

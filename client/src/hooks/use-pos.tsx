@@ -80,7 +80,7 @@ export function usePOS() {
         notes: null,
       }));
 
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders", {
+      const response = await fetch("http://42.118.102.26:4500/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ order: orderData, items }),
@@ -118,8 +118,8 @@ export function usePOS() {
 
       setLastReceipt(receipt);
       updateActiveOrderCart([]);
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products"] });
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/products"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/orders"] });
 
       // Dispatch events for real-time updates
       if (typeof window !== "undefined") {
@@ -190,7 +190,7 @@ export function usePOS() {
 
     try {
       // Fetch product details
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products/${productId}`);
+      const response = await fetch(`http://42.118.102.26:4500/api/products/${productId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch product");
       }

@@ -42,49 +42,64 @@ export default function KitchenDisplay() {
   const { data: pendingItems, refetch: refetchPendingItems } = useQuery<
     PendingOrderItem[]
   >({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/order-items/pending"],
+    queryKey: ["http://42.118.102.26:4500/api/order-items/pending"],
     queryFn: async () => {
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/order-items/pending");
+      const response = await fetch("http://42.118.102.26:4500/api/order-items/pending");
       if (!response.ok) {
         throw new Error("Failed to fetch pending order items");
       }
       return response.json();
     },
+    refetchInterval: 2000,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   // Fetch progress order items (ready to serve)
   const { data: progressItems, refetch: refetchProgressItems } = useQuery<
     PendingOrderItem[]
   >({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/order-items/progress"],
+    queryKey: ["http://42.118.102.26:4500/api/order-items/progress"],
     queryFn: async () => {
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/order-items/progress");
+      const response = await fetch("http://42.118.102.26:4500/api/order-items/progress");
       if (!response.ok) {
         throw new Error("Failed to fetch progress order items");
       }
       return response.json();
     },
+    refetchInterval: 2000,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   // Fetch completed order items
   const { data: completedItems, refetch: refetchCompletedItems } = useQuery<
     PendingOrderItem[]
   >({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/order-items/completed"],
+    queryKey: ["http://42.118.102.26:4500/api/order-items/completed"],
     queryFn: async () => {
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/order-items/completed");
+      const response = await fetch("http://42.118.102.26:4500/api/order-items/completed");
       if (!response.ok) {
         throw new Error("Failed to fetch completed order items");
       }
       return response.json();
     },
+    refetchInterval: 2000,
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   // Fetch pending orders - orders that are NOT paid, completed, or cancelled
   const { data: orders, refetch } = useQuery<KitchenOrder[]>({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders"],
+    queryKey: ["http://42.118.102.26:4500/api/orders"],
     queryFn: async () => {
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders");
+      const response = await fetch("http://42.118.102.26:4500/api/orders");
       if (!response.ok) {
         throw new Error("Failed to fetch kitchen orders");
       }
@@ -100,10 +115,10 @@ export default function KitchenDisplay() {
 
   // Fetch products for item details
   const { data: products } = useQuery<Product[]>({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products"],
+    queryKey: ["http://42.118.102.26:4500/api/products"],
     queryFn: async () => {
       const response = await fetch(
-        "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products?limit=50000&includeInactive=false",
+        "http://42.118.102.26:4500/api/products?limit=50000&includeInactive=false",
       );
       if (!response.ok) {
         throw new Error("Failed to fetch products");
@@ -116,7 +131,7 @@ export default function KitchenDisplay() {
   // WebSocket connection for real-time updates
   useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/ws`;
+    const wsUrl = `http://42.118.102.26:4500/ws`;
     const socket = new WebSocket(wsUrl);
 
     socket.onopen = () => {
@@ -149,7 +164,7 @@ export default function KitchenDisplay() {
 
   const updateOrderStatus = async (orderId: number, status: string) => {
     try {
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders/${orderId}/kitchen-status`, {
+      const response = await fetch(`http://42.118.102.26:4500/api/orders/${orderId}/kitchen-status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -170,7 +185,7 @@ export default function KitchenDisplay() {
 
   const updateOrderItemStatus = async (itemId: number, status: string) => {
     try {
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/order-items/${itemId}/status`, {
+      const response = await fetch(`http://42.118.102.26:4500/api/order-items/${itemId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -395,7 +410,7 @@ export default function KitchenDisplay() {
                                           {item.productName || "Unknown"}
                                         </div>
                                         {item.notes && (
-                                          <div className="text-sm text-orange-600 italic mt-1">
+                                          <div className="text-sm text-orange-600 italic mt-1 font-medium">
                                             📝 {item.notes}
                                           </div>
                                         )}

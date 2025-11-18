@@ -20,14 +20,14 @@ export function CategoryStatsModal({ isOpen, onClose }: CategoryStatsModalProps)
 
   // Fetch categories
   const { data: categoriesData } = useQuery<any[]>({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories"],
+    queryKey: ["http://42.118.102.26:4500/api/categories"],
   });
 
   // Fetch products
   const { data: productsData } = useQuery<any[]>({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products", { includeInactive: true }],
+    queryKey: ["http://42.118.102.26:4500/api/products", { includeInactive: true }],
     queryFn: async () => {
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products?includeInactive=true");
+      const response = await fetch("http://42.118.102.26:4500/api/products?includeInactive=true");
       if (!response.ok) throw new Error("Failed to fetch products");
       return response.json();
     },

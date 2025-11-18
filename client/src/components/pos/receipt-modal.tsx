@@ -71,25 +71,30 @@ export function ReceiptModal({
 
   // Query store settings
   const { data: storeSettings } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/store-settings"],
+    queryKey: ["http://42.118.102.26:4500/api/store-settings"],
     queryFn: async () => {
-      const response = await apiRequest("GET", "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/store-settings");
+      const response = await apiRequest("GET", "http://42.118.102.26:4500/api/store-settings");
       console.log("🏢 Store settings fetched:", response.json());
       return response.json();
     },
     enabled: isOpen, // Only fetch when modal is open
   });
 
+  // Query products to get tax rates
+  const { data: products } = useQuery({
+    queryKey: ["http://42.118.102.26:4500/api/products/active"],
+  });
+
   // Query to get table info based on orderId
   const { data: tableInfo } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/tables/by-order", receipt?.id],
+    queryKey: ["http://42.118.102.26:4500/api/tables/by-order", receipt?.id],
     queryFn: async () => {
       if (!receipt?.id) return null;
 
       // First get the order to find tableId
       const orderResponse = await apiRequest(
         "GET",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders/${receipt.id}`,
+        `http://42.118.102.26:4500/api/orders/${receipt.id}`,
       );
       const order = await orderResponse.json();
       receipt.orderNumber = order.orderNumber;
@@ -99,7 +104,7 @@ export function ReceiptModal({
       // Then get the table info
       const tableResponse = await apiRequest(
         "GET",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/tables/${order.tableId}`,
+        `http://42.118.102.26:4500/api/tables/${order.tableId}`,
       );
       const table = await tableResponse.json();
 
@@ -172,7 +177,7 @@ export function ReceiptModal({
   useEffect(() => {
     async function fetchPrinterConfigs() {
       try {
-        const printerResponse = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs");
+        const printerResponse = await fetch("http://42.118.102.26:4500/api/printer-configs");
         if (!printerResponse.ok) {
           console.error("Failed to fetch printer configs");
           return;
@@ -185,7 +190,7 @@ export function ReceiptModal({
         let tableFloor = null;
         if (receipt?.tableId) {
           try {
-            const tableResponse = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/tables/${receipt.tableId}`);
+            const tableResponse = await fetch(`http://42.118.102.26:4500/api/tables/${receipt.tableId}`);
             if (tableResponse.ok) {
               const tableData = await tableResponse.json();
               tableFloor = tableData.floor;
@@ -417,7 +422,7 @@ export function ReceiptModal({
       let activePrinterConfigs = [];
       try {
         console.log("🖨️ Fetching active printer configurations...");
-        const printerResponse = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/printer-configs");
+        const printerResponse = await fetch("http://42.118.102.26:4500/api/printer-configs");
         if (printerResponse.ok) {
           const allConfigs = await printerResponse.json();
           activePrinterConfigs = allConfigs.filter(
@@ -456,7 +461,7 @@ export function ReceiptModal({
         console.log("🖨️ Trying configured POS printers for all platforms...");
 
         try {
-          const printResponse = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/pos/print-receipt", {
+          const printResponse = await fetch("http://42.118.102.26:4500/api/pos/print-receipt", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -1478,89 +1483,124 @@ export function ReceiptModal({
                     storeSettings?.priceIncludesTax ??
                     false;
 
-                  // Fetch products data to get tax rates if not in receipt items
-                  const { data: products } = useQuery({
-                    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products"],
-                    queryFn: async () => {
-                      const response = await apiRequest("GET", "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products");
-                      return response.json();
-                    },
-                    enabled: isOpen,
-                  });
-
                   const taxGroups = (receipt.items || []).reduce(
                     (groups, item) => {
-                      // Try to get tax rate from item first
-                      let taxRate = parseFloat(
-                        item.taxRate || item.product?.taxRate || "0",
-                      );
+                      // CRITICAL: Always get taxRate from item first (from database), then product, then default to 0
+                      let taxRate = 0;
 
-                      // If no tax rate found, look it up from products by productId
-                      if (
-                        taxRate === 0 &&
-                        products &&
-                        Array.isArray(products)
-                      ) {
+                      // Priority 3: Lookup from products array by productId
+                      if (products && Array.isArray(products)) {
                         const productId = item.productId || item.id;
                         const product = products.find(
                           (p: any) => p.id === productId,
                         );
-                        if (product && product.taxRate) {
-                          taxRate = parseFloat(product.taxRate);
+                        if (
+                          product?.taxRate !== null &&
+                          product?.taxRate !== undefined
+                        ) {
+                          taxRate = parseFloat(String(product.taxRate));
                           console.log(
-                            `📊 Receipt: Fetched tax rate ${taxRate}% for product ${productId} from products table`,
+                            `📊 Receipt: Fetched tax rate ${taxRate}% for product ${productId} (${item.productName}) from products table`,
                           );
                         }
+                      } else if (
+                        item.taxRate !== null &&
+                        item.taxRate !== undefined &&
+                        item.taxRate !== ""
+                      ) {
+                        taxRate = parseFloat(String(item.taxRate));
+                        console.log(
+                          `📊 Receipt: Using item.taxRate=${taxRate}% for ${item.productName}`,
+                        );
                       }
+                      // Priority 2: item.product.taxRate (from joined product)
+                      else if (
+                        item.product?.taxRate !== null &&
+                        item.product?.taxRate !== undefined
+                      ) {
+                        taxRate = parseFloat(String(item.product.taxRate));
+                        console.log(
+                          `📊 Receipt: Using item.product.taxRate=${taxRate}% for ${item.productName}`,
+                        );
+                      }
+
+                      console.log(
+                        `📊 Receipt: Final taxRate for ${item.productName}: ${taxRate}%`,
+                        {
+                          itemTaxRate: item.taxRate,
+                          productTaxRate: item.product?.taxRate,
+                          finalTaxRate: taxRate,
+                        },
+                      );
 
                       const itemTaxFromDB = parseFloat(item.tax || "0");
 
-                      if (taxRate > 0) {
-                        if (!groups[taxRate]) groups[taxRate] = 0;
+                      // Initialize tax rate group
+                      if (!groups[taxRate]) groups[taxRate] = 0;
 
-                        if (itemTaxFromDB > 0) {
-                          groups[taxRate] += itemTaxFromDB;
-                        } else {
-                          const unitPrice = parseFloat(
-                            item.unitPrice || item.price || "0",
+                      if (itemTaxFromDB > 0) {
+                        // Use pre-calculated tax from database
+                        groups[taxRate] += itemTaxFromDB;
+                        console.log(
+                          `📊 Receipt: Using DB tax=${itemTaxFromDB} for ${item.productName} at ${taxRate}%`,
+                        );
+                      } else if (taxRate > 0) {
+                        // Calculate tax based on actual tax rate
+                        const unitPrice = parseFloat(
+                          item.unitPrice || item.price || "0",
+                        );
+                        const quantity = parseFloat(item.quantity || "1");
+                        const itemDiscount = parseFloat(item.discount || "0");
+                        const itemSubtotal = unitPrice * quantity;
+
+                        if (priceIncludeTax) {
+                          // When price includes tax:
+                          const discountPerUnit = itemDiscount / quantity;
+                          const adjustedPrice = Math.max(
+                            0,
+                            unitPrice - discountPerUnit,
                           );
-                          const quantity = parseFloat(item.quantity || "1");
-                          const itemDiscount = parseFloat(item.discount || "0");
-                          const itemSubtotal = unitPrice * quantity;
-                          const priceAfterDiscount =
-                            itemSubtotal - itemDiscount;
-
-                          if (priceIncludeTax) {
-                            // When price includes tax:
-                            // giá bao gồm thuế = (price - (discount/quantity)) * quantity
-                            const discountPerUnit = itemDiscount / quantity;
-                            const adjustedPrice = Math.max(
-                              0,
-                              unitPrice - discountPerUnit,
-                            );
-                            const giaGomThue = adjustedPrice * quantity;
-                            // subtotal = giá bao gồm thuế / (1 + (taxRate / 100)) (làm tròn)
-                            const tamTinh = Math.round(
-                              giaGomThue / (1 + taxRate / 100),
-                            );
-                            // tax = giá bao gồm thuế - subtotal
-                            const taxAmount = giaGomThue - tamTinh;
-                            groups[taxRate] += Math.round(taxAmount);
-                          } else {
-                            // When price doesn't include tax:
-                            // subtotal = (price - (discount/quantity)) * quantity
-                            const discountPerUnit = itemDiscount / quantity;
-                            const adjustedPrice = Math.max(
-                              0,
-                              unitPrice - discountPerUnit,
-                            );
-                            const tamTinh = adjustedPrice * quantity;
-                            // tax = subtotal * (taxRate / 100) (làm tròn)
-                            const taxAmount = Math.round(
-                              tamTinh * (taxRate / 100),
-                            );
-                            groups[taxRate] += Math.round(taxAmount);
-                          }
+                          const giaGomThue = adjustedPrice * quantity;
+                          const tamTinh = Math.round(
+                            giaGomThue / (1 + taxRate / 100),
+                          );
+                          const taxAmount = giaGomThue - tamTinh;
+                          groups[taxRate] += Math.round(taxAmount);
+                          console.log(
+                            `📊 Receipt: Calculated tax=${Math.round(taxAmount)} for ${item.productName} at ${taxRate}% (price includes tax)`,
+                            {
+                              unitPrice,
+                              quantity,
+                              itemDiscount,
+                              giaGomThue,
+                              tamTinh,
+                              taxAmount,
+                            },
+                          );
+                        } else {
+                          // When price doesn't include tax:
+                          const discountPerUnit = itemDiscount / quantity;
+                          const adjustedPrice = Math.max(
+                            0,
+                            unitPrice - discountPerUnit,
+                          );
+                          const tamTinh = adjustedPrice * quantity;
+                          const taxAmount = Math.round(
+                            tamTinh * (taxRate / 100),
+                          );
+                          groups[taxRate] += Math.round(taxAmount);
+                          console.log(
+                            `📊 Receipt: Calculated tax=${Math.round(taxAmount)} for ${item.productName} at ${taxRate}% (price excludes tax)`,
+                            {
+                              unitPrice,
+                              quantity,
+                              itemDiscount,
+                              adjustedPrice,
+                              tamTinh,
+                              taxRate,
+                              taxAmount,
+                            },
+                          );
                         }
                       }
                       return groups;
@@ -1568,10 +1608,27 @@ export function ReceiptModal({
                     {} as Record<number, number>,
                   );
 
+                  // Sort tax rates descending and show all tax rates > 0
                   const sortedTaxRates = Object.keys(taxGroups)
                     .map(Number)
-                    .filter((taxRate) => taxRate > 0 && taxGroups[taxRate] > 0)
+                    .filter((rate) => rate > 0) // Chỉ hiển thị thuế suất > 0%
                     .sort((a, b) => b - a);
+
+                  console.log("📊 Receipt: Tax groups calculated:", {
+                    taxGroups,
+                    sortedTaxRates,
+                    itemsCount: receipt.items?.length,
+                    priceIncludeTax,
+                    items: receipt.items?.map((i) => ({
+                      name: i.productName,
+                      itemTaxRate: i.taxRate,
+                      productTaxRate: i.product?.taxRate,
+                      tax: i.tax,
+                      price: i.unitPrice || i.price,
+                      quantity: i.quantity,
+                      discount: i.discount,
+                    })),
+                  });
 
                   return sortedTaxRates.map((taxRate) => (
                     <tr key={taxRate}>

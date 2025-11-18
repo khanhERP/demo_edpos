@@ -34,7 +34,7 @@ export default function TablesPage({ onLogout }: TablesPageProps) {
         const isCustomDomain = !host.includes('replit.dev');
 
         // For custom domains, use the Replit deployment proxy
-        const wsUrl = `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/ws`;
+        const wsUrl = `http://42.118.102.26:4500/ws`;
 
         console.log(`📡 Tables: Connecting to WebSocket at ${wsUrl}`);
         ws = new WebSocket(wsUrl);
@@ -69,8 +69,8 @@ export default function TablesPage({ onLogout }: TablesPageProps) {
 
               // Clear cache and force refresh
               queryClient.clear();
-              queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/tables"] });
-              queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders"] });
+              queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/tables"] });
+              queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/orders"] });
 
               // Dispatch custom events for TableGrid component
               window.dispatchEvent(
@@ -117,8 +117,8 @@ export default function TablesPage({ onLogout }: TablesPageProps) {
 
       // Force data refresh for any e-invoice related events
       queryClient.clear();
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/tables"] });
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/orders"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/tables"] });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/orders"] });
 
       // Dispatch refresh event for TableGrid
       window.dispatchEvent(

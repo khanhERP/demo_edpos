@@ -1,5 +1,5 @@
 export const loginPosAsync = async (request: LoginPosRequest): Promise<LoginResponse> => {
-  const response = await fetch('https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/pos/login', {
+  const response = await fetch('http://42.118.102.26:4500/api/pos/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export const createQRPosAsync = async (request: CreateQRPosRequest, bankCode: st
     console.log('📤 Request payload:', { ...request, bankCode, clientID });
     
     // Use proxy route to avoid CORS issues
-    const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/pos/create-qr-proxy`, {
+    const response = await fetch(`http://42.118.102.26:4500/api/pos/create-qr-proxy`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export const createQRPosAsync = async (request: CreateQRPosRequest, bankCode: st
     
     // Fallback to alternative internal API route
     try {
-      const fallbackResponse = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/pos/create-qr?bankCode=${bankCode}&clientID=${clientID}`, {
+      const fallbackResponse = await fetch(`http://42.118.102.26:4500/api/pos/create-qr?bankCode=${bankCode}&clientID=${clientID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

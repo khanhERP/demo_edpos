@@ -38,7 +38,7 @@ export function ExpenseProductsReport() {
     message: string;
     data: ExpenseProduct[];
   }>({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/purchase-receipts/expense-products"],
+    queryKey: ["http://42.118.102.26:4500/api/purchase-receipts/expense-products"],
   });
 
   const expenseProducts = response?.data || [];

@@ -19,7 +19,7 @@ export function EmployeeList() {
   const { t } = useTranslation();
 
   const { data: employeesData, isLoading } = useQuery<Employee[]>({
-    queryKey: ['https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/employees'],
+    queryKey: ['http://42.118.102.26:4500/api/employees'],
   });
 
   // Sort employees by ID descending (newest first)
@@ -27,11 +27,11 @@ export function EmployeeList() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await apiRequest('DELETE', `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/employees/${id}`);
+      const response = await apiRequest('DELETE', `http://42.118.102.26:4500/api/employees/${id}`);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/employees'] });
+      queryClient.invalidateQueries({ queryKey: ['http://42.118.102.26:4500/api/employees'] });
     },
     onError: () => {
       toast({

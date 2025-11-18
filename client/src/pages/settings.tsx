@@ -187,7 +187,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     if (!employeeToDelete) return;
 
     try {
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/employees/${employeeToDelete.id}`, {
+      const response = await fetch(`http://42.118.102.26:4500/api/employees/${employeeToDelete.id}`, {
         method: "DELETE",
       });
 
@@ -227,7 +227,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
       }
 
       await queryClient.refetchQueries({
-        queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/employees"],
+        queryKey: ["http://42.118.102.26:4500/api/employees"],
       });
 
       toast({
@@ -275,21 +275,21 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
 
   // Fetch store settings
   const { data: storeData, isLoading } = useQuery<StoreSettings>({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/store-settings"],
+    queryKey: ["http://42.118.102.26:4500/api/store-settings"],
   });
 
   // Fetch customers
   const { data: customersData, isLoading: customersLoading } = useQuery<
     Customer[]
   >({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/customers"],
+    queryKey: ["http://42.118.102.26:4500/api/customers"],
   });
 
   // Fetch employees
   const { data: employeesRawData, isLoading: employeesLoading } = useQuery<
     any[]
   >({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/employees"],
+    queryKey: ["http://42.118.102.26:4500/api/employees"],
   });
 
   // Sort employees by ID descending (newest first)
@@ -333,7 +333,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   const { data: categoriesData, isLoading: categoriesLoading } = useQuery<
     any[]
   >({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories"],
+    queryKey: ["http://42.118.102.26:4500/api/categories"],
   });
 
   // Fetch products (include inactive products in settings) - with pagination
@@ -341,10 +341,10 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     data: productsResponse,
     isLoading: productsLoading
   } = useQuery({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products", { page: productsCurrentPage, limit: productsPageSize }],
+    queryKey: ["http://42.118.102.26:4500/api/products", { page: productsCurrentPage, limit: productsPageSize }],
     queryFn: async () => {
       const response = await fetch(
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products?page=${productsCurrentPage}&limit=${productsPageSize}&includeInactive=true`
+        `http://42.118.102.26:4500/api/products?page=${productsCurrentPage}&limit=${productsPageSize}&includeInactive=true`
       );
       if (!response.ok) throw new Error("Failed to fetch products");
       return response.json();
@@ -405,7 +405,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   // Fetch payment methods from API
   const { data: paymentMethodsData, isLoading: paymentMethodsLoading } =
     useQuery<any[]>({
-      queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/payment-methods"],
+      queryKey: ["http://42.118.102.26:4500/api/payment-methods"],
     });
 
   // Update local state when data is loaded
@@ -418,15 +418,15 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   // Mutation to update store settings
   const updateStoreSettingsMutation = useMutation({
     mutationFn: async (settings: Partial<InsertStoreSettings>) => {
-      const response = await apiRequest("PUT", "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/store-settings", settings);
+      const response = await apiRequest("PUT", "http://42.118.102.26:4500/api/store-settings", settings);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/store-settings"] });
-      toast({
-        title: t("common.success"),
-        description: t("settings.storeUpdated"),
-      });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/store-settings"] });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.storeUpdated"),
+      // });
     },
     onError: () => {
       toast({
@@ -528,15 +528,15 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   // Mutation to create payment method
   const createPaymentMethodMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/payment-methods", data);
+      const response = await apiRequest("POST", "http://42.118.102.26:4500/api/payment-methods", data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/payment-methods"] });
-      toast({
-        title: t("common.success"),
-        description: "Đã thêm phương thức thanh toán mới",
-      });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/payment-methods"] });
+      // toast({
+      //   title: t("common.success"),
+      //   description: "Đã thêm phương thức thanh toán mới",
+      // });
     },
     onError: () => {
       toast({
@@ -552,17 +552,17 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
       const response = await apiRequest(
         "PUT",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/payment-methods/${id}`,
+        `http://42.118.102.26:4500/api/payment-methods/${id}`,
         data,
       );
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/payment-methods"] });
-      toast({
-        title: t("common.success"),
-        description: t("settings.paymentUpdateSuccessDesc"),
-      });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/payment-methods"] });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.paymentUpdateSuccessDesc"),
+      // });
     },
     onError: () => {
       toast({
@@ -576,15 +576,15 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   // Mutation to delete payment method
   const deletePaymentMethodMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await apiRequest("DELETE", `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/payment-methods/${id}`);
+      const response = await apiRequest("DELETE", `http://42.118.102.26:4500/api/payment-methods/${id}`);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/payment-methods"] });
-      toast({
-        title: t("common.success"),
-        description: "Đã xóa phương thức thanh toán",
-      });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/payment-methods"] });
+      // toast({
+      //   title: t("common.success"),
+      //   description: "Đã xóa phương thức thanh toán",
+      // });
     },
     onError: () => {
       toast({
@@ -665,7 +665,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     if (!customerToDelete) return;
 
     try {
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/customers/${customerToDelete.id}`, {
+      const response = await fetch(`http://42.118.102.26:4500/api/customers/${customerToDelete.id}`, {
         method: "DELETE",
       });
 
@@ -673,12 +673,12 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/customers"] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/customers"] });
 
-      toast({
-        title: t("common.success"),
-        description: t("settings.customerDeleteSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.customerDeleteSuccess"),
+      // });
 
       setShowCustomerDeleteDialog(false);
       setCustomerToDelete(null);
@@ -754,7 +754,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     }
 
     try {
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories", {
+      const response = await fetch("http://42.118.102.26:4500/api/categories", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -769,13 +769,13 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
       const result = await response.json();
 
       // Refetch data immediately
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories"] });
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products"] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/categories"] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/products"] });
 
-      toast({
-        title: t("common.success"),
-        description: t("settings.categoryCreateSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.categoryCreateSuccess"),
+      // });
       setShowCategoryForm(false);
       resetCategoryForm();
     } catch (error) {
@@ -808,7 +808,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     }
 
     try {
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories/${editingCategory.id}`, {
+      const response = await fetch(`http://42.118.102.26:4500/api/categories/${editingCategory.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -827,13 +827,13 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
       resetCategoryForm();
 
       // Refetch data immediately
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories"] });
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products"] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/categories"] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/products"] });
 
-      toast({
-        title: t("common.success"),
-        description: t("settings.categoryUpdateSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.categoryUpdateSuccess"),
+      // });
     } catch (error) {
       console.error("Category update error:", error);
       toast({
@@ -871,7 +871,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     if (!categoryToDelete) return;
 
     try {
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories/${categoryToDelete.id}`, {
+      const response = await fetch(`http://42.118.102.26:4500/api/categories/${categoryToDelete.id}`, {
         method: "DELETE",
       });
 
@@ -883,13 +883,13 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
       }
 
       // Refetch data immediately
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/categories"] });
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products"] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/categories"] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/products"] });
 
-      toast({
-        title: t("common.success"),
-        description: t("settings.categoryDeleteSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.categoryDeleteSuccess"),
+      // });
 
       setShowDeleteDialog(false);
       setCategoryToDelete(null);
@@ -992,7 +992,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
         finalProductData.imageUrl = productForm.imageUrl;
       }
 
-      const response = await fetch("https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products", {
+      const response = await fetch("http://42.118.102.26:4500/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalProductData),
@@ -1005,13 +1005,13 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
         throw new Error(errorData.message || "Failed to create product");
       }
 
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
       setShowProductForm(false);
       resetProductForm();
-      toast({
-        title: t("common.success"),
-        description: t("settings.productCreatedSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.productCreatedSuccess"),
+      // });
     } catch (error) {
       console.error("Product creation error:", error);
       toast({
@@ -1084,7 +1084,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
         finalProductData.imageUrl = productForm.imageUrl;
       }
 
-      const response = await fetch(`https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products/${editingProduct.id}`, {
+      const response = await fetch(`http://42.118.102.26:4500/api/products/${editingProduct.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalProductData),
@@ -1097,14 +1097,14 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
         throw new Error(errorData.message || "Failed to update product");
       }
 
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
       setShowProductForm(false);
       setEditingProduct(null);
       resetProductForm();
-      toast({
-        title: t("common.success"),
-        description: t("settings.productUpdatedSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.productUpdatedSuccess"),
+      // });
     } catch (error) {
       console.error("Product update error:", error);
       toast({
@@ -1195,14 +1195,14 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     if (!productToDelete) return;
 
     try {
-      await apiRequest("DELETE", `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products/${productToDelete.id}`);
+      await apiRequest("DELETE", `http://42.118.102.26:4500/api/products/${productToDelete.id}`);
 
-      await queryClient.refetchQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
+      await queryClient.refetchQueries({ queryKey: ["http://42.118.102.26:4500/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
 
-      toast({
-        title: t("common.success"),
-        description: t("settings.productDeleteSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.productDeleteSuccess"),
+      // });
 
       setShowProductDeleteDialog(false);
       setProductToDelete(null);
@@ -1250,7 +1250,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   // Fetch E-invoice connections
   const { data: eInvoiceConnections = [], isLoading: eInvoiceLoading } =
     useQuery<any[]>({
-      queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/einvoice-connections"],
+      queryKey: ["http://42.118.102.26:4500/api/einvoice-connections"],
     });
 
   // E-invoice mutations
@@ -1258,19 +1258,19 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     mutationFn: async (data: any) => {
       const response = await apiRequest(
         "POST",
-        "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/einvoice-connections",
+        "http://42.118.102.26:4500/api/einvoice-connections",
         data,
       );
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/einvoice-connections"],
+        queryKey: ["http://42.118.102.26:4500/api/einvoice-connections"],
       });
-      toast({
-        title: t("common.success"),
-        description: t("settings.einvoiceConnectionCreateSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.einvoiceConnectionCreateSuccess"),
+      // });
       setShowEInvoiceForm(false);
       resetEInvoiceForm();
     },
@@ -1287,19 +1287,19 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
       const response = await apiRequest(
         "PUT",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/einvoice-connections/${id}`,
+        `http://42.118.102.26:4500/api/einvoice-connections/${id}`,
         data,
       );
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/einvoice-connections"],
+        queryKey: ["http://42.118.102.26:4500/api/einvoice-connections"],
       });
-      toast({
-        title: t("common.success"),
-        description: t("settings.einvoiceConnectionUpdateSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.einvoiceConnectionUpdateSuccess"),
+      // });
       setShowEInvoiceForm(false);
       resetEInvoiceForm();
     },
@@ -1316,18 +1316,18 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     mutationFn: async (id: number) => {
       const response = await apiRequest(
         "DELETE",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/einvoice-connections/${id}`,
+        `http://42.118.102.26:4500/api/einvoice-connections/${id}`,
       );
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/einvoice-connections"],
+        queryKey: ["http://42.118.102.26:4500/api/einvoice-connections"],
       });
-      toast({
-        title: t("common.success"),
-        description: t("settings.einvoiceConnectionDeleteSuccess"),
-      });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.einvoiceConnectionDeleteSuccess"),
+      // });
       setShowEInvoiceDeleteDialog(false);
       setEInvoiceToDelete(null);
     },
@@ -1513,21 +1513,21 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   const { data: invoiceTemplates = [], isLoading: templatesLoading } = useQuery<
     any[]
   >({
-    queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/invoice-templates"],
+    queryKey: ["http://42.118.102.26:4500/api/invoice-templates"],
   });
 
   // Invoice template mutations
   const createTemplateMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await apiRequest("POST", "https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/invoice-templates", data);
+      const response = await apiRequest("POST", "http://42.118.102.26:4500/api/invoice-templates", data);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/invoice-templates"] });
-      toast({
-        title: t("common.success"),
-        description: t("settings.einvoiceTemplateCreateSuccess"),
-      });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/invoice-templates"] });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.einvoiceTemplateCreateSuccess"),
+      // });
       setShowTemplateForm(false);
       resetTemplateForm();
     },
@@ -1544,17 +1544,17 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
       const response = await apiRequest(
         "PUT",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/invoice-templates/${id}`,
+        `http://42.118.102.26:4500/api/invoice-templates/${id}`,
         data,
       );
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/invoice-templates"] });
-      toast({
-        title: t("common.success"),
-        description: t("settings.einvoiceTemplateUpdateSuccess"),
-      });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/invoice-templates"] });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.einvoiceTemplateUpdateSuccess"),
+      // });
       setShowTemplateForm(false);
       resetTemplateForm();
     },
@@ -1571,16 +1571,16 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
     mutationFn: async (id: number) => {
       const response = await apiRequest(
         "DELETE",
-        `https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/invoice-templates/${id}`,
+        `http://42.118.102.26:4500/api/invoice-templates/${id}`,
       );
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/invoice-templates"] });
-      toast({
-        title: t("common.success"),
-        description: t("settings.einvoiceTemplateDeleteSuccess"),
-      });
+      queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/invoice-templates"] });
+      // toast({
+      //   title: t("common.success"),
+      //   description: t("settings.einvoiceTemplateDeleteSuccess"),
+      // });
       setShowTemplateDeleteDialog(false);
       setTemplateToDelete(null);
     },
@@ -1680,7 +1680,7 @@ export default function SettingsPage({ onLogout }: SettingsPageProps) {
   };
 
   const refetchProducts = () => {
-    queryClient.invalidateQueries({ queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
+    queryClient.invalidateQueries({ queryKey: ["http://42.118.102.26:4500/api/products", { page: productsCurrentPage, limit: productsPageSize }] });
   };
 
   const handleOpenCategoryDialog = () => {

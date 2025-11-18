@@ -40,7 +40,7 @@ function Router({ onLogout }: { onLogout: () => void }) {
 
     // Fetch store settings to determine business type
     const { data: storeSettings } = useQuery<StoreSettings>({
-      queryKey: ["https://ae5ea441-9a81-4f0c-badc-1b445a58a294-00-bx7jg4f6rly0.sisko.replit.dev/api/store-settings"],
+      queryKey: ["http://42.118.102.26:4500/api/store-settings"],
     });
 
     useEffect(() => {
